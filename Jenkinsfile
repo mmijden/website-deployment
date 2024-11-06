@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Clone ') {
       steps {
-        git(branch: 'main', url: 'https://github.com/mmijden/website-deployment')
+        sh 'git clone https://github.com/mmijden/website-deployment.git'
       }
     }
 
