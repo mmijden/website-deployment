@@ -1,0 +1,30 @@
+name: CI/CD for HTML Website
+
+on:
+  push:
+    branches:
+      - main  # of de branch die je gebruikt
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to on-premise Apache server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+      run: |
+        # Installeer SSH client
+        sudo apt-get install -y openssh-client
+
+        # Voeg de SSH-sleutel toe
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+
+        # Maak verbinding met de server en upload de bestanden
+        scp -i private_key -r ./path/to/your/html/* $SERVER_USER@$SERVER_IP:/path/to/your/apache/root/
