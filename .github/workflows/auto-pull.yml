@@ -1,0 +1,35 @@
+name: Auto Pull Request
+
+on:
+  push:
+    branches:
+      - main  # of de branch waar je op wilt triggeren
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create a new branch
+        run: |
+          git checkout -b auto-update-branch
+          # Hier kun je eventueel wijzigingen aanbrengen in je HTML-bestanden
+          # Bijvoorbeeld: echo "<!-- Nieuwe wijziging -->" >> index.html
+          git add .
+          git commit -m "Automatische update van HTML-bestanden" || echo "Geen wijzigingen om te committen"
+
+      - name: Push changes
+        run: |
+          git push origin auto-update-branch
+
+      - name: Create Pull Request
+        uses: mmijden/website-deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Automatische update"
+          body: "Deze pull request is automatisch aangemaakt."
+          base: main  # de branch waar je de PR naartoe wilt sturen
+          head: auto-update-branch  # de naam van de branch die je hebt aangemaakt
